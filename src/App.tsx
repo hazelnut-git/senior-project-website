@@ -47,7 +47,7 @@ export default function App() {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [academicPlan, setAcademicPlan] = useState<Semester[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   // Handle dark mode toggle
   useEffect(() => {

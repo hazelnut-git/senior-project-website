@@ -1,5 +1,9 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Course {
   code: string;
@@ -22,6 +26,8 @@ interface AcademicPlanGridProps {
 }
 
 export function AcademicPlanGrid({ semesters, majorName }: AcademicPlanGridProps) {
+  const [currentSemesterIndex, setCurrentSemesterIndex] = useState(0);
+
   const getTypeColor = (type?: string) => {
     switch (type) {
       case 'Core': return 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/30 dark:text-orange-200 dark:border-orange-800';
@@ -33,6 +39,19 @@ export function AcademicPlanGrid({ semesters, majorName }: AcademicPlanGridProps
   };
 
   const totalCredits = semesters.reduce((sum, semester) => sum + semester.totalCredits, 0);
+  const currentSemester = semesters[currentSemesterIndex];
+  
+  const goToPreviousSemester = () => {
+    setCurrentSemesterIndex(Math.max(0, currentSemesterIndex - 1));
+  };
+  
+  const goToNextSemester = () => {
+    setCurrentSemesterIndex(Math.min(semesters.length - 1, currentSemesterIndex + 1));
+  };
+
+  if (!currentSemester) {
+    return null;
+  }
 
   return (
     <div className="space-y-6">
@@ -48,67 +67,93 @@ export function AcademicPlanGrid({ semesters, majorName }: AcademicPlanGridProps
             <span>{totalCredits} Total Credits</span>
           </div>
         </CardHeader>
-      </Card>
 
-      {/* Course Type Legend */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex flex-wrap gap-3 justify-center">
-            <Badge className={`border ${getTypeColor('Core')}`}>Core Requirements</Badge>
-            <Badge className={`border ${getTypeColor('Major')}`}>Major Courses</Badge>
-            <Badge className={`border ${getTypeColor('Elective')}`}>Electives</Badge>
-            <Badge className={`border ${getTypeColor('Minor')}`}>Minor/Specialization</Badge>
+        {/* Navigation Controls */}
+        <CardContent className="">
+          <div className="flex items-center justify-between gap-4">
+            {/* Previous Button */}
+            <Button
+              variant="outline"
+              onClick={goToPreviousSemester}
+              disabled={currentSemesterIndex === 0}
+              className="flex items-center gap-2"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Previous
+            </Button>
+
+            {/* Semester Selector */}
+            <div className="flex items-center gap-4">
+              <Select 
+                value={currentSemesterIndex.toString()} 
+                onValueChange={(value) => setCurrentSemesterIndex(parseInt(value))}
+              >
+                <SelectTrigger className="w-60">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {semesters.map((semester, index) => (
+                    <SelectItem key={index} value={index.toString()}>
+                      Semester {semester.number}: {semester.season} {semester.year}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              {/* Progress Indicator */}
+              <div className="text-sm text-muted-foreground">
+                {currentSemesterIndex + 1} of {semesters.length}
+              </div>
+            </div>
+
+            {/* Next Button */}
+            <Button
+              variant="outline"
+              onClick={goToNextSemester}
+              disabled={currentSemesterIndex === semesters.length - 1}
+              className="flex items-center gap-2"
+            >
+              Next
+              <ChevronRight className="w-4 h-4" />
+            </Button>
           </div>
         </CardContent>
-      </Card>
 
-      {/* Semesters Grid */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {semesters.map((semester) => (
-          <Card key={semester.number} className="h-fit">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center justify-between">
-                <span>{semester.season} {semester.year}</span>
-                <Badge variant="outline">{semester.totalCredits} credits</Badge>
-              </CardTitle>
-              <div className="text-sm text-muted-foreground">
-                Semester {semester.number}
+
+      {/* Current Semester Display */}
+        <CardContent className="space-y-3">
+          {currentSemester.courses.map((course, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-between p-3 bg-muted/50 rounded-lg hover:bg-muted/70 transition-colors"
+            >
+              <div className="flex-1 min-w-0">
+                <div className="font-medium">{course.code}</div>
+                <div className="text-sm text-muted-foreground">
+                  {course.name}
+                </div>
               </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {semester.courses.map((course, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium text-sm">{course.code}</div>
-                    <div className="text-xs text-muted-foreground truncate">
-                      {course.name}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 ml-3">
-                    <span className="text-xs font-medium">{course.credits}cr</span>
-                    {course.type && (
-                      <Badge 
-                        variant="secondary" 
-                        className={`text-xs border ${getTypeColor(course.type)}`}
-                      >
-                        {course.type}
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              ))}
-              {semester.courses.length === 0 && (
-                <div className="text-center py-8 text-muted-foreground">
-                  <div className="text-sm">No courses scheduled</div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+              <div className="flex items-center gap-3 ml-4">
+                <span className="text-sm font-medium">{course.credits} credits</span>
+                {course.type && (
+                  <Badge 
+                    variant="secondary" 
+                    className={`border ${getTypeColor(course.type)}`}
+                  >
+                    {course.type}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          ))}
+          {currentSemester.courses.length === 0 && (
+            <div className="text-center py-16 text-muted-foreground">
+              <div className="text-lg">No courses scheduled</div>
+              <div className="text-sm mt-2">This semester appears to be empty</div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
