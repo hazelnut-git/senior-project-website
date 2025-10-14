@@ -270,7 +270,6 @@ export default function App() {
                 )}
               </CardContent>
             </Card>
-
             {/* Academic Interests */}
             <Card>
               <CardHeader>
