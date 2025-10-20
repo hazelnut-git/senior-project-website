@@ -138,3 +138,10 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 package-lock.json
+
+# Supabase backend credentials
+SUPABASE_URL=https://nyavzodzazoczmvkoqfl.supabase.co
+supabaseKey = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55YXZ6b2R6YXpvY3ptdmtvcWZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4Njc1MTIsImV4cCI6MjA3MjQ0MzUxMn0.VC5ZoWRU-o0h0fuBLAXS1C1prtJRzm0qgtURCti1TVk
+
+# Local server port
+PORT = 3000
