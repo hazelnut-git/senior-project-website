@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -27,6 +27,11 @@ interface AcademicPlanGridProps {
 
 export function AcademicPlanGrid({ semesters, majorName }: AcademicPlanGridProps) {
   const [currentSemesterIndex, setCurrentSemesterIndex] = useState(0);
+
+  // Reset semester index when semesters change
+  useEffect(() => {
+    setCurrentSemesterIndex(0);
+  }, [semesters]);
 
   const getTypeColor = (type?: string) => {
     switch (type) {

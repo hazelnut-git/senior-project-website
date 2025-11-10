@@ -95,6 +95,7 @@ export default function App() {
       });
       if (!res.ok) throw new Error('Failed to generate plan');
       const plan = await res.json();
+      setAcademicPlan([])
       setAcademicPlan(plan);
     } catch (err) {
       console.error('Generate plan error:', err);
