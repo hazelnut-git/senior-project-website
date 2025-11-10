@@ -171,7 +171,7 @@ export default function App() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <Select onValueChange={handleTagSelect}>
+                <Select value={selectedTags.length === 0 ? '' : undefined} onValueChange={handleTagSelect}>
                   <SelectTrigger>
                     <SelectValue placeholder="Add interests" />
                   </SelectTrigger>
