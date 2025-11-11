@@ -95,6 +95,7 @@ export default function App() {
       });
       if (!res.ok) throw new Error('Failed to generate plan');
       const plan = await res.json();
+      setAcademicPlan([])
       setAcademicPlan(plan);
     } catch (err) {
       console.error('Generate plan error:', err);
@@ -171,7 +172,7 @@ export default function App() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <Select onValueChange={handleTagSelect}>
+                <Select value={selectedTags.length === 0 ? '' : undefined} onValueChange={handleTagSelect}>
                   <SelectTrigger>
                     <SelectValue placeholder="Add interests" />
                   </SelectTrigger>
